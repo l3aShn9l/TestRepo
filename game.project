@@ -1,0 +1,61 @@
+[bootstrap]
+main_collection = /example/example.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 600
+height = 900
+display_profiles = /example/custom.display_profilesc
+dynamic_orientation = 1
+
+[project]
+title = druid
+version = 0.10.0
+publisher = Insality
+developer = Insality
+dependencies#0 = https://github.com/insalitygames/deftest/archive/master.zip
+dependencies#1 = https://github.com/britzl/monarch/archive/refs/tags/3.3.0.zip
+
+[library]
+include_dirs = druid
+
+[input]
+gamepads = /builtins/input/default.gamepadsc
+use_accelerometer = 0
+
+[druid]
+no_auto_input = 0
+no_stencil_check = 0
+no_auto_template = 0
+input_text = text
+input_touch = touch
+input_marked_text = marked_text
+input_key_esc = key_esc
+input_key_back = key_back
+input_key_enter = key_enter
+input_key_backspace = key_backspace
+input_multitouch = multitouch
+input_scroll_up = scroll_up
+input_scroll_down = scroll_down
+
+[html5]
+engine_arguments = --verify-graphics-calls=false
+heap_size = 64
+splash_image = /media/druid_logo.png
+scale_mode = fit
+show_fullscreen_button = 0
+show_made_with_defold = 0
+cssfile = /example/light_theme.css
+
+[native_extension]
+app_manifest = /example/game.appmanifest
+
+[graphics]
+texture_profiles = /example/custom.texture_profiles
+
+[android]
+package = com.insality.druid
+input_method = HiddenInputField
+

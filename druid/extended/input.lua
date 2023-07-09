@@ -225,7 +225,7 @@ end
 
 
 function Input.on_input_interrupt(self)
-	-- self:unselect()
+	self:unselect()
 end
 
 

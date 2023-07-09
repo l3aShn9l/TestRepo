@@ -179,12 +179,12 @@ local function process_input(self, action_id, action, components)
 		local component = components[i]
 		local meta = component._meta
 		if meta.input_enabled and can_use_input_component(self, component) then
-			if is_input_consumed then
-			if component.on_input_interrupt then
+			if not is_input_consumed then
+				is_input_consumed = component:on_input(action_id, action)
+			else
+				if component.on_input_interrupt then
 					component:on_input_interrupt()
 				end
-			else
-				is_input_consumed = component:on_input(action_id, action)
 			end
 		end
 	end

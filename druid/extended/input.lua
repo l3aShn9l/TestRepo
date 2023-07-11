@@ -155,7 +155,7 @@ end
 
 
 function Input.on_input(self, action_id, action)
-	print("on_input")
+	--print("on_input")
 	if self.is_selected then
 		local input_text = nil
 		if action_id == const.ACTION_TEXT then
@@ -220,13 +220,13 @@ end
 
 
 function Input.on_focus_lost(self)
-	print("on_focus_lost")
+	--print("on_focus_lost")
 	self:unselect()
 end
 
 
 function Input.on_input_interrupt(self)
-	print("on_input_interrupt")
+	--print("on_input_interrupt")
 	--self:unselect()
 end
 
@@ -309,8 +309,8 @@ function Input.unselect(self)
 	gui.reset_keyboard()
 	self.marked_value = ""
 	if self.is_selected then
-		self:reset_input_priority()
-		self.button:reset_input_priority()
+		--self:reset_input_priority()
+		--self.button:reset_input_priority()
 		self.is_selected = false
 
 		gui.hide_keyboard()

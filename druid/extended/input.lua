@@ -287,7 +287,7 @@ function Input.select(self)
 	if not self.is_selected then
 		--self:set_input_priority(const.PRIORITY_INPUT_MAX, true)
 		--self.button:set_input_priority(const.PRIORITY_INPUT_MAX, true)
-		self:set_input_priority(0, true)
+		self:set_input_priority(10, true)
 		self.button:set_input_priority(100, true)
 		self.previous_value = self.value
 		self.is_selected = true
@@ -314,7 +314,7 @@ function Input.unselect(self)
 		--self:reset_input_priority()
 		--self.button:reset_input_priority()
 		self:set_input_priority(100, true)
-		self.button:set_input_priority(0, true)
+		self.button:set_input_priority(10, true)
 
 		self.is_selected = false
 

@@ -301,7 +301,7 @@ end
 --- Remove selection from input. It will hide the keyboard and trigger on_unselect events
 -- @tparam Input self @{Input}
 function Input.unselect(self)
-	msg.post(".",  hash("unselected"))
+	console.log("unselect");
 	gui.reset_keyboard()
 	self.marked_value = ""
 	if self.is_selected then

@@ -155,6 +155,7 @@ end
 
 
 function Input.on_input(self, action_id, action)
+	print("on_input")
 	if self.is_selected then
 		local input_text = nil
 		if action_id == const.ACTION_TEXT then
@@ -219,11 +220,13 @@ end
 
 
 function Input.on_focus_lost(self)
+	print("on_focus_lost")
 	self:unselect()
 end
 
 
 function Input.on_input_interrupt(self)
+	print("on_input_interrupt")
 	--self:unselect()
 end
 
@@ -278,6 +281,7 @@ end
 --- Select input field. It will show the keyboard and trigger on_select events
 -- @tparam Input self @{Input}
 function Input.select(self)
+	print("select")
 	gui.reset_keyboard()
 	self.marked_value = ""
 	if not self.is_selected then
@@ -301,7 +305,7 @@ end
 --- Remove selection from input. It will hide the keyboard and trigger on_unselect events
 -- @tparam Input self @{Input}
 function Input.unselect(self)
-	print("unselect");
+	print("unselect")
 	gui.reset_keyboard()
 	self.marked_value = ""
 	if self.is_selected then

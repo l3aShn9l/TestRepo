@@ -311,6 +311,8 @@ function Input.unselect(self)
 	if self.is_selected then
 		--self:reset_input_priority()
 		--self.button:reset_input_priority()
+		self:set_input_priority(0, true)
+		self.button:set_input_priority(0, true)
 		self.is_selected = false
 
 		gui.hide_keyboard()

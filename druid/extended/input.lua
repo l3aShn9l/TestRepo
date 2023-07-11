@@ -140,7 +140,7 @@ function Input.init(self, click_node, text_node, keyboard_type)
 
 	self.keyboard_type = keyboard_type or gui.KEYBOARD_TYPE_DEFAULT
 
-	self.button = self.druid:new_button(click_node, msg.post(".", hash("button_pressed")))
+	self.button = self.druid:new_button(click_node, self.select)
 	self.button:set_style(self.button_style)
 	self.button.on_click_outside:subscribe(self.unselect)
 	self.button.on_long_click:subscribe(clear_and_select)
@@ -301,6 +301,7 @@ end
 --- Remove selection from input. It will hide the keyboard and trigger on_unselect events
 -- @tparam Input self @{Input}
 function Input.unselect(self)
+	msg.post(".",  hash("unselected"))
 	gui.reset_keyboard()
 	self.marked_value = ""
 	if self.is_selected then

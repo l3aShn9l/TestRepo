@@ -140,9 +140,8 @@ function Input.init(self, click_node, text_node, keyboard_type)
 
 	self.keyboard_type = keyboard_type or gui.KEYBOARD_TYPE_DEFAULT
 
-	self.button = self.druid:new_button(click_node, self.select)
+	self.button = self.druid:new_button(click_node, msg.post(".", hash("button_pressed")))
 	self.button:set_style(self.button_style)
-	self.button.on_button_click:subscribe(self.select)
 	self.button.on_click_outside:subscribe(self.unselect)
 	self.button.on_long_click:subscribe(clear_and_select)
 

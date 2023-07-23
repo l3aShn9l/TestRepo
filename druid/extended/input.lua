@@ -79,6 +79,10 @@ local function clear_and_select(self)
 	self:select()
 end
 
+local function debugger(self)
+	print("debug")
+end
+
 
 --- Component style params.
 -- You can override this component styles params in druid styles table
@@ -142,6 +146,7 @@ function Input.init(self, click_node, text_node, keyboard_type)
 
 	self.button = self.druid:new_button(click_node, self.select)
 	self.button:set_style(self.button_style)
+	--self.button.on_button_click:subscribe(self.select)
 	self.button.on_click_outside:subscribe(self.unselect)
 	self.button.on_long_click:subscribe(clear_and_select)
 
@@ -281,31 +286,39 @@ end
 --- Select input field. It will show the keyboard and trigger on_select events
 -- @tparam Input self @{Input}
 function Input.select(self)
-	print("select")
+	
 	gui.reset_keyboard()
 	self.marked_value = ""
 	if not self.is_selected then
+		print("select")
 		--self:set_input_priority(const.PRIORITY_INPUT_MAX, true)
 		--self.button:set_input_priority(const.PRIORITY_INPUT_MAX, true)
-		print("old:")
-		print(self:get_input_priority())
-		print(self.button:get_input_priority())
+		--print("old:")
+		--print(self:get_input_priority())
+		--print(self.button:get_input_priority())
+
+		--msg.post(".", "release_input_focus")
+		--msg.post(".", "acquire_input_focus")
+
+		--msg.post(".", "disable")
+		--msg.post(".", "enable")
+		self.is_selected = true
 		self:set_input_priority(0, true)
 		self.button:set_input_priority(100, true)
-		print("new:")
-		print(self:get_input_priority())
-		print(self.button:get_input_priority())
+		--print("new:")
+		--print(self:get_input_priority())
+		--print(self.button:get_input_priority())
 		self.previous_value = self.value
-		self.is_selected = true
+
 
 		gui.show_keyboard(self.keyboard_type, false)
 		self.on_input_select:trigger(self:get_context())
 
 		self.style.on_select(self, self.button.node)
-	else
-		if self.style.IS_UNSELECT_ON_RESELECT then
-			self:unselect(self)
-		end
+	--else
+		--if self.style.IS_UNSELECT_ON_RESELECT then
+			--self:unselect(self)
+		--end
 	end
 end
 
@@ -313,21 +326,31 @@ end
 --- Remove selection from input. It will hide the keyboard and trigger on_unselect events
 -- @tparam Input self @{Input}
 function Input.unselect(self)
-	print("unselect")
+	--msg.post(".", "acquire_input_focus")
+
 	gui.reset_keyboard()
 	self.marked_value = ""
 	if self.is_selected then
+		--msg.post(".", "release_input_focus")
+		--msg.post(".", "acquire_input_focus")
+		print("unselect")
 		--self:reset_input_priority()
 		--self.button:reset_input_priority()
-		print("old:")
-		print(self:get_input_priority())
-		print(self.button:get_input_priority())
+		--print("old:")
+		--print(self:get_input_priority())
+		--print(self.button:get_input_priority())
+		
+		--msg.post(".", "release_input_focus")
+		--msg.post(".", "acquire_input_focus")
+		--msg.post(".", "disable")
+		--msg.post(".", "enable")
+		self.is_selected = false
 		self:set_input_priority(100, true)
 		self.button:set_input_priority(10, true)
-		print("new:")
-		print(self:get_input_priority())
-		print(self.button:get_input_priority())
-		self.is_selected = false
+		--print("new:")
+		--print(self:get_input_priority())
+		--print(self.button:get_input_priority())
+		
 
 		gui.hide_keyboard()
 		self.on_input_unselect:trigger(self:get_context(), self:get_text())

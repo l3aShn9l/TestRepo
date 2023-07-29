@@ -29,11 +29,15 @@ local _instances = {}
 
 local function get_druid_instances()
 	for i = #_instances, 1, -1 do
+		if _instances[i].set_pr:is_exist() then
+			_instances[i].set_pr:clear()
+		end
+		_instances[i].set_pr:subscribe(update_instances)
 		if _instances[i]._deleted then
 			table.remove(_instances, i)
 		end
 	end
-
+	sort_instances()
 	return _instances
 end
 
@@ -65,9 +69,50 @@ function M.new(context, style)
 
 	local new_instance = druid_instance(context, style)
 	table.insert(_instances, new_instance)
+	local instances = get_druid_instances()
+	--for i = 1, #instances do
+	--	instances[i].get_priority:subscribe(sort_instances)
+	--end
+	--sort_instances()
 	return new_instance
 end
 
+function update_priority(url, value, components)
+	--print("#up")
+	for i = #_instances, 1, -1 do
+		if _instances[i].url == url then
+			_instances[i]._priority = value
+		else 
+			if value == 10 then
+			else
+				msg.post(_instances[i].url, "on_focus_lost")
+			end
+		end
+	end
+end
+
+function update_instances(params)
+	--print("#ui")
+	update_priority(params[1] ,params[2])
+	sort_instances()
+	for i = 1, #_instances, 1 do
+		--update_priority(_instances[i])
+		--_instances[i]._priority = 0
+		print(_instances[i].url)
+		--print(_instances[i]:get_priority())
+		print(_instances[i]._priority)
+		msg.post(_instances[i].url, "acquire_input_focus")
+	end
+end
+
+function sort_instances()
+	--print("#s")
+	table.sort(_instances, function(a, b)
+	--if a:get_priority() ~= b:get_priority() then
+		return a:get_priority() < b:get_priority()
+		end
+	)
+end
 
 --- Set new default style.
 -- @function druid.set_default_style

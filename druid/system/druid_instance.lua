@@ -33,6 +33,8 @@
 -- @see Layout
 -- @see Hotkey
 
+
+local Event = require("druid.event")
 local helper = require("druid.helper")
 local class = require("druid.system.middleclass")
 local settings = require("druid.system.settings")
@@ -87,7 +89,6 @@ local function input_release(self)
 		druid_input.remove()
 	end
 end
-
 
 local function sort_input_stack(self)
 	local input_components = self.components_interest[base_component.ON_INPUT]
@@ -180,7 +181,8 @@ local function process_input(self, action_id, action, components)
 		local meta = component._meta
 		if meta.input_enabled and can_use_input_component(self, component) then
 			if not is_input_consumed then
-				is_input_consumed = component:on_input(action_id, action)
+			--if component:on_input(action_id, action) then
+			is_input_consumed = component:on_input(action_id, action)
 			else
 				if component.on_input_interrupt then
 					component:on_input_interrupt()
@@ -202,6 +204,7 @@ function DruidInstance.initialize(self, context, style)
 	self._context = context
 	self._style = style or settings.default_style
 	self._deleted = false
+	self._priority = 10
 	self._is_late_remove_enabled = false
 	self._late_remove = {}
 	self._is_debug = false
@@ -210,6 +213,9 @@ function DruidInstance.initialize(self, context, style)
 	self._input_blacklist = nil
 	self._input_whitelist = nil
 
+	self.set_pr = Event()
+	self.get_pr = Event()
+	
 	self.components_interest = {}
 	self.components_all = {}
 	for i = 1, #base_component.ALL_INTERESTS do
@@ -219,6 +225,24 @@ function DruidInstance.initialize(self, context, style)
 	timer.delay(0, false, function()
 		self:late_init()
 	end)
+end
+
+function DruidInstance.get_priority(self)
+	self.get_pr:trigger(self)
+	return self._priority
+end
+
+function DruidInstance.set_priority(self,value)
+	print("#sp")
+	--self._priority = 100
+	params = {self.url, value}
+	self.set_pr:trigger(params)
+	return self
+end
+
+function DruidInstance.get_components(self)
+	print("#gc")
+	return self.components_interest[base_component.ON_FOCUS_LOST]
 end
 
 

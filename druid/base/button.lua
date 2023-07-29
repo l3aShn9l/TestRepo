@@ -81,23 +81,31 @@ local function on_button_mouse_hover(self, hover_state)
 	--self:set_input_priority(10, true)
 	--print(self:get_input_priority())
 	--msg.post(".", "acquire_input_focus")
+	--self.druid:set_priority(0)
 	print("hello")
+	--print(self.druid.url)
+	--print(self.druid:get_priority())
 	self.hello_count = self.hello_count + 1
 	--print(self.hello_count)
-	msg.post(".", "acquire_input_focus")
+	--msg.post(".", "acquire_input_focus")
 end
 local function not_on_button_mouse_hover(self, hover_state)
 	--self:set_input_priority(100, true)
 	--print(self:get_input_priority())
 	--msg.post(".", "release_input_focus")
 	--self.style.on_mouse_hover(self, self.anim_node, hover_state)
+	--print(self.druid.url)
+	--print(self.druid._priority)
+	--self.druid:set_priority(10)
 	print("goodbye")
 	--msg.post(".", "acquire_input_focus")
 end
 
 
 local function on_button_click(self)
-	--print("###")
+	print("###")
+	self.druid:set_priority(0)
+	self.druid:set_priority(10)
 	self.click_in_row = 1
 	self.on_click:trigger(self:get_context(), self.params, self)
 	self.style.on_click(self, self.anim_node)

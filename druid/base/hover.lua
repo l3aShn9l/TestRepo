@@ -110,7 +110,7 @@ function Hover.set_mouse_hover(self, state)
 			self.on_mouse_hover:trigger(self:get_context(), state)
 		else
 			self.not_on_mouse_hover:trigger(self:get_context(), state)
-			
+
 		end
 	end
 end

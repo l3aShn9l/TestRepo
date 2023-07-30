@@ -16,6 +16,8 @@ M.ACTION_BACK = hash(sys.get_config("druid.input_key_back", "key_back"))
 M.ACTION_ENTER = hash(sys.get_config("druid.input_key_enter", "key_enter"))
 M.ACTION_MULTITOUCH = hash(sys.get_config("druid.input_multitouch", "multitouch"))
 M.ACTION_BACKSPACE = hash(sys.get_config("druid.input_key_backspace", "key_backspace"))
+M.ACTION_LEFT = hash(sys.get_config("druid.input_key_left", "key_left"))
+M.ACTION_RIGHT = hash(sys.get_config("druid.input_key_right", "key_right"))
 
 M.ACTION_SCROLL_UP = hash(sys.get_config("druid.input_scroll_up", "scroll_up"))
 M.ACTION_SCROLL_DOWN = hash(sys.get_config("druid.input_scroll_down", "scroll_down"))

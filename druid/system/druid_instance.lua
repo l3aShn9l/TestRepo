@@ -181,8 +181,7 @@ local function process_input(self, action_id, action, components)
 		local meta = component._meta
 		if meta.input_enabled and can_use_input_component(self, component) then
 			if not is_input_consumed then
-			--if component:on_input(action_id, action) then
-			is_input_consumed = component:on_input(action_id, action)
+				is_input_consumed = component:on_input(action_id, action)
 			else
 				if component.on_input_interrupt then
 					component:on_input_interrupt()
@@ -227,24 +226,23 @@ function DruidInstance.initialize(self, context, style)
 	end)
 end
 
+
+function DruidInstance.get_url(self)
+	return self.url
+end
+
 function DruidInstance.get_priority(self)
 	self.get_pr:trigger(self)
 	return self._priority
 end
 
-function DruidInstance.set_priority(self,value)
-	print("#sp")
-	--self._priority = 100
-	params = {self.url, value}
+
+function DruidInstance.set_priority(self, value, focus_lost_flag)
+	self._priority = value
+	params = {self.url, value, focus_lost_flag}
 	self.set_pr:trigger(params)
 	return self
 end
-
-function DruidInstance.get_components(self)
-	print("#gc")
-	return self.components_interest[base_component.ON_FOCUS_LOST]
-end
-
 
 --- Create new druid component
 -- @tparam DruidInstance self

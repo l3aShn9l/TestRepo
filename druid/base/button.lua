@@ -78,34 +78,17 @@ end
 
 local function on_button_mouse_hover(self, hover_state)
 	self.style.on_mouse_hover(self, self.anim_node, hover_state)
-	--self:set_input_priority(10, true)
-	--print(self:get_input_priority())
-	--msg.post(".", "acquire_input_focus")
-	--self.druid:set_priority(0)
-	print("hello")
-	--print(self.druid.url)
-	--print(self.druid:get_priority())
-	self.hello_count = self.hello_count + 1
-	--print(self.hello_count)
-	--msg.post(".", "acquire_input_focus")
+	print("hover")
 end
-local function not_on_button_mouse_hover(self, hover_state)
-	--self:set_input_priority(100, true)
-	--print(self:get_input_priority())
-	--msg.post(".", "release_input_focus")
-	--self.style.on_mouse_hover(self, self.anim_node, hover_state)
-	--print(self.druid.url)
-	--print(self.druid._priority)
-	--self.druid:set_priority(10)
-	print("goodbye")
-	--msg.post(".", "acquire_input_focus")
+local function on_button_mouse_away(self, hover_state)
+	self.style.on_mouse_hover(self, self.anim_node, hover_state)
+	print("away")
+
 end
 
 
 local function on_button_click(self)
-	print("###")
-	self.druid:set_priority(0)
-	self.druid:set_priority(10)
+	self.druid:set_priority(10, true)
 	self.click_in_row = 1
 	self.on_click:trigger(self:get_context(), self.params, self)
 	self.style.on_click(self, self.anim_node)
@@ -225,14 +208,13 @@ function Button.init(self, node, callback, params, anim_node)
 	self.druid = self:get_druid()
 	self.node = self:get_node(node)
 	self.node_id = gui.get_id(self.node)
-	self.hello_count = 0
 	self.anim_node = anim_node and self:get_node(anim_node) or self.node
 	self.start_scale = gui.get_scale(self.anim_node)
 	self.start_pos = gui.get_position(self.anim_node)
 	self.params = params
 	self.hover = self.druid:new_hover(node, on_button_hover)
 	self.hover.on_mouse_hover:subscribe(on_button_mouse_hover)
-	self.hover.not_on_mouse_hover:subscribe(not_on_button_mouse_hover)
+	self.hover.on_mouse_away:subscribe(on_button_mouse_away)
 	self.click_zone = nil
 	self.is_repeated_started = false
 	self.last_pressed_time = 0
@@ -251,7 +233,6 @@ function Button.init(self, node, callback, params, anim_node)
 	self.on_double_click = Event()
 	self.on_hold_callback = Event()
 	self.on_click_outside = Event()
-	--self.on_click_outside:subscribe(on_button_click)
 end
 
 
@@ -287,9 +268,7 @@ function Button.on_input(self, action_id, action)
 		-- Can't interact, if touch outside of button
 		self.can_action = false
 		if action.released then
-			--msg.post(".", "release_input_focus")
 			self.on_click_outside:trigger(self:get_context(), self.params, self)
-			--msg.post(".", "acquire_input_focus")
 		end
 		return false
 	end

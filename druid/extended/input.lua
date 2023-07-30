@@ -283,9 +283,7 @@ function Input.select(self)
 	
 	if not self.is_selected then
 		print("select")
-		--msg.post(".", "on_focus_gained")
-		print(self.druid:get_priority())
-		self.druid:set_priority(0)
+		self.druid:set_priority(0, false)
 		self:set_input_priority(0, true)
 		self.button:set_input_priority(100, true)
 		self.previous_value = self.value
@@ -311,8 +309,7 @@ function Input.unselect(self)
 	
 	if self.is_selected then
 		print("unselect")
-		--msg.post(".", "on_focus_lost")
-		self.druid:set_priority(10)
+		self.druid:set_priority(10, false)
 		self:set_input_priority(100, true)
 		self.button:set_input_priority(10, true)
 		self.is_selected = false

@@ -540,8 +540,10 @@ function UpgradedRichInput.select(self)
 	position_cursor(self)
 	
 	if not self.is_selected then
+		print("select")
+		self.druid:set_priority(0, false)
 		self:set_input_priority(0, true)
-		self.button:set_input_priority(const.PRIORITY_INPUT_MAX, true)
+		self.button:set_input_priority(100, true)
 		
 		self.previous_value = self.value
 		self.is_selected = true
@@ -569,8 +571,10 @@ function UpgradedRichInput.unselect(self)
 	gui.reset_keyboard()
 	self.marked_value = ""
 	if self.is_selected then
-		self:set_input_priority(const.PRIORITY_INPUT_MAX, true)
-		self.button:reset_input_priority()
+		print("unselect")
+		self.druid:set_priority(10, false)
+		self:set_input_priority(100, true)
+		self.button:set_input_priority(10, true)
 		
 		self.is_selected = false
 		cancel_outline(self)

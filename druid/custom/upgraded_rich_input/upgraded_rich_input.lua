@@ -354,7 +354,7 @@ function UpgradedRichInput.on_input(self, action_id, action)
 					if self.outlined then
 						if self.outlined_all then
 							clear_text(self)
-							action.textinput_text = action.text
+							input_text = action.text
 						else
 							self.cursor_shift = self.outline_to - utf8.len(self.value) - 1
 							input_text = utf8.sub(self.value, 1, self.outline_from - 1) .. action.text .. utf8.sub(self.value, self.outline_to + 1, -1)

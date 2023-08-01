@@ -44,6 +44,8 @@ M.ON_LAYOUT_CHANGE = "on_layout_change"
 M.ON_MESSAGE_INPUT = "on_message_input"
 M.ON_WINDOW_RESIZED = "on_window_resized"
 M.ON_LANGUAGE_CHANGE = "on_language_change"
+M.ON_FREEZE_KEYBOARD_INPUT = "on_freeze_keyboard_input"
+M.ON_UNFREEZE_KEYBOARD_INPUT = "on_unfreeze_keyboard_input"
 
 
 M.PRIORITY_INPUT = 10

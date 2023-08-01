@@ -337,112 +337,113 @@ end
 function UpgradedRichInput.on_input(self, action_id, action)
 	self.last_touch = action
 	if self.is_selected then
-		local input_text = nil
-		if action_id == const.ACTION_TEXT then
-			-- ignore return key
-			if action.text == "\n" or action.text == "\r" then
+		if not self.blocked_keyboard_input then
+			local input_text = nil
+			if action_id == const.ACTION_TEXT then
+				-- ignore return key
+				if action.text == "\n" or action.text == "\r" then
+					return true
+				end
+
+				local hex = string.gsub(action.text,"(.)", function (c)
+					return string.format("%02X%s",string.byte(c), "")
+				end)
+
+				-- ignore arrow keys
+				if not utf8.match(hex, "EF9C8[0-3]") then
+					if not self.allowed_characters or utf8.match(action.text, self.allowed_characters) then
+						if self.outlined then
+							if self.outlined_all then
+								clear_text(self)
+								input_text = action.text
+							else
+								self.cursor_shift = self.outline_to - utf8.len(self.value) - 1
+								input_text = utf8.sub(self.value, 1, self.outline_from - 1) .. action.text .. utf8.sub(self.value, self.outline_to + 1, -1)
+							end
+							cancel_outline(self)
+						else
+							input_text = utf8.sub(self.value, 1, self.cursor_shift) .. action.text .. utf8.sub(self.value, utf8.len(self.value) + self.cursor_shift + 2, -1)
+						end
+						if self.max_length then
+							input_text = utf8.sub(input_text, 1, self.max_length)
+						end
+					else
+						self.on_input_wrong:trigger(self:get_context(), action.text)
+						self.style.on_input_wrong(self, self.button.node)
+					end
+					self.marked_value = ""
+				end
+			end
+		
+			if action.pressed or action.repeated then
+				if action_id == const.ACTION_LEFT then
+					if self.outlined then
+						cancel_outline(self)
+					end
+					if self.cursor_shift ~= math.max(-1 - utf8.len(self.value), self.cursor_shift - 1) then
+						self.cursor_shift = math.max(-1 - utf8.len(self.value), self.cursor_shift - 1)
+						self.marked_value = ""
+						self:update_text()
+						position_cursor(self)
+					end
+				elseif action_id == const.ACTION_RIGHT then
+					if self.outlined then
+						cancel_outline(self)
+					end
+					if self.cursor_shift ~= math.min(-1, self.cursor_shift + 1) then
+						self.cursor_shift = math.min(-1, self.cursor_shift + 1)
+						self.marked_value = ""
+						self:update_text()
+						position_cursor(self)
+					end
+				end
+			end
+
+			if action_id == const.ACTION_MARKED_TEXT then
+				self.marked_value = action.text or ""
+				if self.max_length then
+					self.marked_value = utf8.sub(self.marked_value, 1, self.max_length)
+				end
+			end
+
+			if action_id == const.ACTION_BACKSPACE and (action.pressed or action.repeated) then
+				if self.outlined then
+					if self.outlined_all then
+						clear_text(self)
+					else
+						self.cursor_shift = self.outline_to - utf8.len(self.value) - 1
+						input_text = utf8.sub(self.value, 1, self.outline_from - 1) .. utf8.sub(self.value, self.outline_to + 1, -1)
+					end
+					cancel_outline(self)
+				else
+					input_text = utf8.sub(self.value, 1, self.cursor_shift - 1) .. utf8.sub(self.value, utf8.len(self.value) + self.cursor_shift + 2, -1)
+				end
+			end
+
+			if action_id == const.ACTION_ENTER and action.released then
+				if not self.style.UNSELECT_IS_ENTER then
+					self.on_input_enter:trigger(self:get_context(), self:get_text())
+				end
+				self:unselect()
 				return true
 			end
 
-			local hex = string.gsub(action.text,"(.)", function (c)
-				return string.format("%02X%s",string.byte(c), "")
-			end)
-
-			-- ignore arrow keys
-			if not utf8.match(hex, "EF9C8[0-3]") then
-				if not self.allowed_characters or utf8.match(action.text, self.allowed_characters) then
-					if self.outlined then
-						if self.outlined_all then
-							clear_text(self)
-							input_text = action.text
-						else
-							self.cursor_shift = self.outline_to - utf8.len(self.value) - 1
-							input_text = utf8.sub(self.value, 1, self.outline_from - 1) .. action.text .. utf8.sub(self.value, self.outline_to + 1, -1)
-						end
-						cancel_outline(self)
-					else
-						input_text = utf8.sub(self.value, 1, self.cursor_shift) .. action.text .. utf8.sub(self.value, utf8.len(self.value) + self.cursor_shift + 2, -1)
-					end
-					if self.max_length then
-						input_text = utf8.sub(input_text, 1, self.max_length)
-					end
-				else
-					self.on_input_wrong:trigger(self:get_context(), action.text)
-					self.style.on_input_wrong(self, self.button.node)
-				end
-				self.marked_value = ""
+			if action_id == const.ACTION_BACK and action.released then
+				self:unselect()
+				return true
 			end
-		end
-		
-		if action.pressed or action.repeated then
-			if action_id == const.ACTION_LEFT then
-				if self.outlined then
-					cancel_outline(self)
-				end
-				if self.cursor_shift ~= math.max(-1 - utf8.len(self.value), self.cursor_shift - 1) then
-					self.cursor_shift = math.max(-1 - utf8.len(self.value), self.cursor_shift - 1)
-					self.marked_value = ""
-					self:update_text()
-					position_cursor(self)
-				end
-			elseif action_id == const.ACTION_RIGHT then
-				if self.outlined then
-					cancel_outline(self)
-				end
-				if self.cursor_shift ~= math.min(-1, self.cursor_shift + 1) then
-					self.cursor_shift = math.min(-1, self.cursor_shift + 1)
-					self.marked_value = ""
-					self:update_text()
-					position_cursor(self)
-				end
+
+			if action_id == const.ACTION_ESC and action.released then
+				self:unselect()
+				return true
 			end
-		end
 
-		if action_id == const.ACTION_MARKED_TEXT then
-			self.marked_value = action.text or ""
-			if self.max_length then
-				self.marked_value = utf8.sub(self.marked_value, 1, self.max_length)
+			if input_text or utf8.len(self.marked_value) > 0 then
+				self:set_text(input_text)
+				return true
 			end
-		end
-
-		if action_id == const.ACTION_BACKSPACE and (action.pressed or action.repeated) then
-			if self.outlined then
-				if self.outlined_all then
-					clear_text(self)
-				else
-					self.cursor_shift = self.outline_to - utf8.len(self.value) - 1
-					input_text = utf8.sub(self.value, 1, self.outline_from - 1) .. utf8.sub(self.value, self.outline_to + 1, -1)
-				end
-				cancel_outline(self)
-			else
-				input_text = utf8.sub(self.value, 1, self.cursor_shift - 1) .. utf8.sub(self.value, utf8.len(self.value) + self.cursor_shift + 2, -1)
-			end
-		end
-
-		if action_id == const.ACTION_ENTER and action.released then
-			if not self.style.UNSELECT_IS_ENTER then
-				self.on_input_enter:trigger(self:get_context(), self:get_text())
-			end
-			self:unselect()
-			return true
-		end
-
-		if action_id == const.ACTION_BACK and action.released then
-			self:unselect()
-			return true
-		end
-
-		if action_id == const.ACTION_ESC and action.released then
-			self:unselect()
-			return true
-		end
-
-		if input_text or utf8.len(self.marked_value) > 0 then
-			self:set_text(input_text)
-			return true
 		end
 	end
-
 	return self.is_selected
 end
 
@@ -451,6 +452,13 @@ function UpgradedRichInput.on_focus_lost(self)
 	self:unselect()
 end
 
+function UpgradedRichInput.on_freeze_keyboard_input(self)
+	self.blocked_keyboard_input = true
+end
+
+function UpgradedRichInput.on_unfreeze_keyboard_input(self)
+	self.blocked_keyboard_input = false
+end
 
 function UpgradedRichInput.on_input_interrupt(self)
 	-- self:unselect()
@@ -541,7 +549,7 @@ function UpgradedRichInput.select(self)
 	
 	if not self.is_selected then
 		print("select")
-		self.druid:set_priority(0, false)
+		self.druid:set_priority(0, "freeze")
 		self:set_input_priority(0, true)
 		self.button:set_input_priority(100, true)
 		
@@ -572,8 +580,8 @@ function UpgradedRichInput.unselect(self)
 	self.marked_value = ""
 	if self.is_selected then
 		print("unselect")
-		self.druid:set_priority(10, false)
-		self:set_input_priority(100, true)
+		self.druid:set_priority(10, "unfreeze")
+		self:set_input_priority(10, true)
 		self.button:set_input_priority(10, true)
 		
 		self.is_selected = false

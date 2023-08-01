@@ -33,6 +33,7 @@ local function get_druid_instances()
 			_instances[i].set_pr:clear()
 		end
 		_instances[i].set_pr:subscribe(update_instances)
+		_instances[i].reset:subscribe(reset_instances)
 		if _instances[i]._deleted then
 			table.remove(_instances, i)
 		end
@@ -73,13 +74,17 @@ function M.new(context, style)
 	return new_instance
 end
 
-function update_priority(url, value, focus_lost_flag)
+function update_priority(url, value, freeze_or_unfreeze)
 	for i = #_instances, 1, -1 do
 		if _instances[i].url == url then
 			_instances[i]._priority = value
 		else 
-			if focus_lost_flag then
-				msg.post(_instances[i].url, "on_focus_lost")
+			if freeze_or_unfreeze == "freeze" then
+				msg.post(_instances[i].url, "on_freeze_keyboard_input")
+			else 
+				if freeze_or_unfreeze  == "unfreeze" then
+				msg.post(_instances[i].url, "on_unfreeze_keyboard_input")
+				end
 			end
 		end
 	end
@@ -93,18 +98,29 @@ function update_instances(params)
 	end
 end
 
+function reset_instances(url)
+	sort_instances()
+	for i = 1, #_instances, 1 do
+		if  _instances[i].url == url then
+			
+		else
+			msg.post(_instances[i].url, "on_focus_lost")
+		end
+	end
+end
+
 function sort_instances()
 	table.sort(_instances, function(a, b)
 		return a:get_priority() < b:get_priority()
-		end
-	)
+	end
+)
 end
 
 --- Set new default style.
 -- @function druid.set_default_style
 -- @tparam table style Druid style module
 function M.set_default_style(style)
-	settings.default_style = style or {}
+settings.default_style = style or {}
 end
 
 
@@ -115,8 +131,8 @@ end
 -- @function druid.set_text_function
 -- @tparam function callback Get localized text function
 function M.set_text_function(callback)
-	settings.get_text = callback or const.EMPTY_FUNCTION
-	M.on_language_change()
+settings.get_text = callback or const.EMPTY_FUNCTION
+M.on_language_change()
 end
 
 
@@ -126,7 +142,7 @@ end
 -- @function druid.set_sound_function
 -- @tparam function callback Sound play callback
 function M.set_sound_function(callback)
-	settings.play_sound = callback or const.EMPTY_FUNCTION
+settings.play_sound = callback or const.EMPTY_FUNCTION
 end
 
 
@@ -135,25 +151,25 @@ end
 -- @function druid.on_window_callback
 -- @tparam string event Event param from window listener
 function M.on_window_callback(event)
-	local instances = get_druid_instances()
+local instances = get_druid_instances()
 
-	if event == window.WINDOW_EVENT_FOCUS_LOST then
-		for i = 1, #instances do
-			msg.post(instances[i].url, base_component.ON_FOCUS_LOST)
-		end
+if event == window.WINDOW_EVENT_FOCUS_LOST then
+	for i = 1, #instances do
+		msg.post(instances[i].url, base_component.ON_FOCUS_LOST)
 	end
+end
 
-	if event == window.WINDOW_EVENT_FOCUS_GAINED then
-		for i = 1, #instances do
-			msg.post(instances[i].url, base_component.ON_FOCUS_GAINED)
-		end
+if event == window.WINDOW_EVENT_FOCUS_GAINED then
+	for i = 1, #instances do
+		msg.post(instances[i].url, base_component.ON_FOCUS_GAINED)
 	end
+end
 
-	if event == window.WINDOW_EVENT_RESIZED then
-		for i = 1, #instances do
-			msg.post(instances[i].url, base_component.ON_WINDOW_RESIZED)
-		end
+if event == window.WINDOW_EVENT_RESIZED then
+	for i = 1, #instances do
+		msg.post(instances[i].url, base_component.ON_WINDOW_RESIZED)
 	end
+end
 end
 
 

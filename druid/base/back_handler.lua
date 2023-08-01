@@ -26,6 +26,7 @@ local BackHandler = component.create("back_handler")
 -- @tparam[opt] any params Callback argument
 function BackHandler.init(self, callback, params)
 	self.params = params
+	self.blocked_keyboard_input = false
 	self.on_back = Event(callback)
 end
 
@@ -35,17 +36,25 @@ end
 -- @tparam string action_id on_input action id
 -- @tparam table action on_input action
 function BackHandler.on_input(self, action_id, action)
-	if not action[const.RELEASED] then
-		return false
-	end
-
-	if action_id == const.ACTION_BACK or action_id == const.ACTION_BACKSPACE then
-		self.on_back:trigger(self:get_context(), self.params)
-		return true
+	if not self.blocked_keyboard_input then
+		if not action[const.RELEASED] then
+			return false
+		end
+		if action_id == const.ACTION_BACK or action_id == const.ACTION_BACKSPACE then
+			self.on_back:trigger(self:get_context(), self.params)
+			return true
+		end
 	end
 
 	return false
 end
 
+function BackHandler.on_freeze_keyboard_input(self)
+	self.blocked_keyboard_input = true
+end
+
+function BackHandler.on_unfreeze_keyboard_input(self)
+	self.blocked_keyboard_input = false
+end
 
 return BackHandler

@@ -214,7 +214,8 @@ function DruidInstance.initialize(self, context, style)
 
 	self.set_pr = Event()
 	self.get_pr = Event()
-	
+	self.reset = Event()
+
 	self.components_interest = {}
 	self.components_all = {}
 	for i = 1, #base_component.ALL_INTERESTS do
@@ -237,10 +238,14 @@ function DruidInstance.get_priority(self)
 end
 
 
-function DruidInstance.set_priority(self, value, focus_lost_flag)
+function DruidInstance.set_priority(self, value, freeze_or_unfreeze)
 	self._priority = value
-	params = {self.url, value, focus_lost_flag}
+	params = {self.url, value, freeze_or_unfreeze}
 	self.set_pr:trigger(params)
+	return self
+end
+function DruidInstance.reset_instances(self)
+	self.reset:trigger(self.url)
 	return self
 end
 
@@ -435,6 +440,26 @@ function DruidInstance.on_focus_lost(self)
 	end
 
 	self:log_message("On focus lost")
+end
+
+
+function DruidInstance.on_freeze_keyboard_input(self)
+	local components = self.components_interest[base_component.ON_FREEZE_KEYBOARD_INPUT]
+	for i = 1, #components do
+		components[i]:on_freeze_keyboard_input()
+	end
+
+	self:log_message("On freeze keyboard input")
+end
+
+
+function DruidInstance.on_unfreeze_keyboard_input(self)
+	local components = self.components_interest[base_component.ON_UNFREEZE_KEYBOARD_INPUT]
+	for i = 1, #components do
+		components[i]:on_unfreeze_keyboard_input()
+	end
+
+	self:log_message("On unfreeze keyboard input")
 end
 
 
@@ -668,7 +693,7 @@ end
 -- @tparam bool no_adjust If true, will not correct text size
 -- @treturn LangText lang_text component
 function DruidInstance.new_lang_text(self, node, locale_id, no_adjust)
-		-- return helper.extended_component("lang_text")
+	-- return helper.extended_component("lang_text")
 	return DruidInstance.new(self, lang_text, node, locale_id, no_adjust)
 end
 

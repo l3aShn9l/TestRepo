@@ -88,7 +88,7 @@ end
 
 
 local function on_button_click(self)
-	self.druid:set_priority(10, true)
+	self.druid:reset_instances()
 	self.click_in_row = 1
 	self.on_click:trigger(self:get_context(), self.params, self)
 	self.style.on_click(self, self.anim_node)

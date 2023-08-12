@@ -745,12 +745,10 @@ end
 
 function Scroll._process_scroll_wheel(self, action_id, action)
 	if not self._is_mouse_hover or self.style.WHEEL_SCROLL_SPEED == 0 then
-		print("no scroll")
 		return false
 	end
 
 	if action_id ~= const.ACTION_SCROLL_UP and action_id ~= const.ACTION_SCROLL_DOWN then
-		print("another action")
 		return false
 	end
 
@@ -776,7 +774,6 @@ function Scroll._process_scroll_wheel(self, action_id, action)
 
 		self:_set_scroll_position(self.target_position)
 	end
-	print("scroll")
 	return true
 end
 

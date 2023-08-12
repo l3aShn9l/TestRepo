@@ -71,19 +71,15 @@ local function is_input_match(self, action_id)
 end
 
 
-local function on_button_hover(self, hover_state)
-	self.style.on_hover(self, self.anim_node, hover_state)
-end
-
-
 local function on_button_mouse_hover(self, hover_state)
 	self.style.on_mouse_hover(self, self.anim_node, hover_state)
 	print("hover")
 end
+
+
 local function on_button_mouse_away(self, hover_state)
 	self.style.on_mouse_hover(self, self.anim_node, hover_state)
 	print("away")
-
 end
 
 
@@ -212,7 +208,7 @@ function Button.init(self, node, callback, params, anim_node)
 	self.start_scale = gui.get_scale(self.anim_node)
 	self.start_pos = gui.get_position(self.anim_node)
 	self.params = params
-	self.hover = self.druid:new_hover(node, on_button_hover)
+	self.hover = self.druid:new_hover(node)
 	self.hover.on_mouse_hover:subscribe(on_button_mouse_hover)
 	self.hover.on_mouse_away:subscribe(on_button_mouse_away)
 	self.click_zone = nil

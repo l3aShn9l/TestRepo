@@ -69,6 +69,18 @@ local function inverse_lerp(min, max, current)
 end
 
 
+local function on_scroll_mouse_hover(self, hover_state)
+	self._is_mouse_hover = true
+	print("hover")
+end
+
+
+local function on_scroll_mouse_away(self, hover_state)
+	self._is_mouse_hover = false
+	print("away")
+end
+
+
 --- Update vector with next conditions:
 -- Field x have to <= field z
 -- Field y have to <= field w
@@ -154,7 +166,8 @@ function Scroll.init(self, view_node, content_node)
 	self.drag.on_touch_end:subscribe(self._on_touch_end)
 
 	self.hover = self.druid:new_hover(view_node)
-	self.hover.on_mouse_hover:subscribe(self._on_mouse_hover)
+	self.hover.on_mouse_hover:subscribe(on_scroll_mouse_hover)
+	self.hover.on_mouse_away:subscribe(on_scroll_mouse_away)
 	self._is_mouse_hover = false
 
 	self.on_scroll = Event()
@@ -732,10 +745,12 @@ end
 
 function Scroll._process_scroll_wheel(self, action_id, action)
 	if not self._is_mouse_hover or self.style.WHEEL_SCROLL_SPEED == 0 then
+		print("no scroll")
 		return false
 	end
 
 	if action_id ~= const.ACTION_SCROLL_UP and action_id ~= const.ACTION_SCROLL_DOWN then
+		print("another action")
 		return false
 	end
 
@@ -761,14 +776,12 @@ function Scroll._process_scroll_wheel(self, action_id, action)
 
 		self:_set_scroll_position(self.target_position)
 	end
-
+	print("scroll")
 	return true
 end
 
 
-function Scroll._on_mouse_hover(self, state)
-	self._is_mouse_hover = state
-end
+
 
 
 return Scroll

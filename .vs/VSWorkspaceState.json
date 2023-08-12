@@ -2,12 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\druid",
-    "\\druid\\base",
+    "\\druid\\custom",
+    "\\druid\\custom\\upgraded_rich_input",
     "\\druid\\editor_scripts",
     "\\druid\\extended",
     "\\druid\\helper",
+    "\\druid\\styles",
+    "\\druid\\styles\\default",
     "\\druid\\system"
   ],
-  "SelectedNode": "\\druid\\base\\hover.lua",
+  "SelectedNode": "\\druid\\custom\\upgraded_rich_input\\upgraded_rich_input.lua",
   "PreviewInSolutionExplorer": false
 }
